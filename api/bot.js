@@ -22,7 +22,7 @@ bot.use(responseTime);
 
 bot.command("start", async (ctx) => {
   await ctx
-    .reply("*Welcome!* ✨\n_Send a tweet._", {
+    .reply("*Welcome!* ✨\n_Send a VSCO username._", {
       parse_mode: "Markdown",
     })
     .then(console.log(`New user added:`, ctx.from))
@@ -32,7 +32,7 @@ bot.command("start", async (ctx) => {
 bot.command("help", async (ctx) => {
   await ctx
     .reply(
-      "*@anzubo Project.*\n\n_This bot downloads media from tweets.\nSend a link to a tweet to try it out!_",
+      "*@anzubo Project.*\n\n_This bot downloads media from VSCO.\nSend a username to try it out!_",
       { parse_mode: "Markdown" }
     )
     .then(console.log("Help command sent to", ctx.from.id))
@@ -146,7 +146,7 @@ bot.on("msg", async (ctx) => {
     }
 
     try {
-      const limit = 50;
+      const limit = 20;
       await getVscoMedia(ctx.msg.text, limit);
     } catch (error) {
       if (error instanceof GrammyError) {
@@ -154,10 +154,13 @@ bot.on("msg", async (ctx) => {
           console.log("Bot was blocked by the user");
         } else if (error.message.includes("Call to 'sendMediaGroup' failed!")) {
           console.log("Error sending files. Maybe API limit was hit.");
-          await ctx.reply(`*Error contacting VSCO.*`, {
-            parse_mode: "Markdown",
-            reply_to_message_id: ctx.msg.message_id,
-          });
+          await ctx.reply(
+            `*Error contacting VSCO or Telegram API limit was hit.*`,
+            {
+              parse_mode: "Markdown",
+              reply_to_message_id: ctx.msg.message_id,
+            }
+          );
         } else {
           await ctx.reply(`*An error occurred: ${error.message}*`, {
             parse_mode: "Markdown",
@@ -169,7 +172,7 @@ bot.on("msg", async (ctx) => {
       } else {
         console.log(`An error occured:`, error);
         await ctx.reply(
-          `*An error occurred. Are you sure you sent a valid Twitter link?*\n_Error: ${error.message}_`,
+          `*An error occurred. Are you sure you sent a valid VSCO username?*\n_Error: ${error.message}_`,
           { parse_mode: "Markdown", reply_to_message_id: ctx.msg.message_id }
         );
         return;
