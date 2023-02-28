@@ -22,7 +22,7 @@ bot.use(responseTime);
 
 bot.command("start", async (ctx) => {
   await ctx
-    .reply("*Welcome!* ✨\n_Send a VSCO username to get 20 recent posts._", {
+    .reply("*Welcome!* ✨\n_Send a VSCO username to get recent posts._", {
       parse_mode: "Markdown",
     })
     .then(console.log(`New user added:`, ctx.from))
@@ -146,7 +146,7 @@ bot.on("msg", async (ctx) => {
     }
 
     try {
-      const limit = 20;
+      const limit = 10;
       await getVscoMedia(ctx.msg.text, limit);
     } catch (error) {
       if (error instanceof GrammyError) {
