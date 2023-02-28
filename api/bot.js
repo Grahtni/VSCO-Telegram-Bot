@@ -113,7 +113,9 @@ bot.on("msg", async (ctx) => {
         const mediaItems = mediaGroups.flat(); // Flatten the array of media items
         const groupedMediaItems = await chunkArray(mediaItems, 10); // Split media items into groups of 10
         for (const mediaGroup of groupedMediaItems) {
-          await ctx.replyWithMediaGroup(mediaGroup);
+          await ctx.replyWithMediaGroup(mediaGroup, {
+            reply_to_message_id: ctx.msg.message_id,
+          });
         }
       } catch (err) {
         console.log(err);
