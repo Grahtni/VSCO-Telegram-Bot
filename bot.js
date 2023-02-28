@@ -82,11 +82,12 @@ bot.on("msg", async (ctx) => {
       try {
         const media = await vscoSession.getMedia(username, limit);
         const mediaURLs = media.map((e) => "https://" + e);
-        const groupedMediaURLs = chunkArray(mediaURLs, 10); // Split URLs into groups of 10
-        const mediaGroupPromises = groupedMediaURLs.map(async (mediaGroup) => {
+        const groupedMediaURLs = await chunkArray(mediaURLs, 10); // Split URLs into groups of 10
+        const mediaGroups = [];
+        for (const mediaGroup of groupedMediaURLs) {
           const mediaGroupItems = await Promise.all(
             mediaGroup.map(async (mediaURL) => {
-              const mediaType = getMediaType(mediaURL);
+              const mediaType = await getMediaType(mediaURL);
               if (mediaType === "photo") {
                 return {
                   type: "photo",
@@ -105,11 +106,12 @@ bot.on("msg", async (ctx) => {
               }
             })
           );
-          return mediaGroupItems.filter((item) => item !== undefined); // Remove undefined items (e.g. unsupported media types)
-        });
-        const mediaGroups = await Promise.all(mediaGroupPromises);
-        const mediaItems = mediaGroups.flatMap((group) => group); // Flatten the array of media items
-        const groupedMediaItems = chunkArray(mediaItems, 10); // Split media items into groups of 10
+          mediaGroups.push(
+            mediaGroupItems.filter((item) => item !== undefined)
+          ); // Remove undefined items (e.g. unsupported media types)
+        }
+        const mediaItems = mediaGroups.flat(); // Flatten the array of media items
+        const groupedMediaItems = await chunkArray(mediaItems, 10); // Split media items into groups of 10
         for (const mediaGroup of groupedMediaItems) {
           await ctx.replyWithMediaGroup(mediaGroup);
         }
@@ -118,7 +120,7 @@ bot.on("msg", async (ctx) => {
       }
     }
 
-    function getMediaType(mediaURL) {
+    async function getMediaType(mediaURL) {
       const extension = path.extname(mediaURL);
       if (
         extension === ".jpg" ||
@@ -135,7 +137,7 @@ bot.on("msg", async (ctx) => {
       }
     }
 
-    function chunkArray(arr, chunkSize) {
+    async function chunkArray(arr, chunkSize) {
       const chunks = [];
       for (let i = 0; i < arr.length; i += chunkSize) {
         chunks.push(arr.slice(i, i + chunkSize));
