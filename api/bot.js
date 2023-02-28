@@ -22,7 +22,7 @@ bot.use(responseTime);
 
 bot.command("start", async (ctx) => {
   await ctx
-    .reply("*Welcome!* ✨\n_Send a VSCO username._", {
+    .reply("*Welcome!* ✨\n_Send a VSCO username to get 20 recent posts._", {
       parse_mode: "Markdown",
     })
     .then(console.log(`New user added:`, ctx.from))
@@ -32,7 +32,7 @@ bot.command("start", async (ctx) => {
 bot.command("help", async (ctx) => {
   await ctx
     .reply(
-      "*@anzubo Project.*\n\n_This bot downloads media from VSCO.\nSend a username to try it out!_",
+      "*@anzubo Project.*\n\n_This bot gets the 20 most recent media posts from a VSCO profile.\nSend a username to try it out!_",
       { parse_mode: "Markdown" }
     )
     .then(console.log("Help command sent to", ctx.from.id))
